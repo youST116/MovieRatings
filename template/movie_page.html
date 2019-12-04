@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Movie: {{movie.title}}</h1>
+    {% if movie.released_at %}
+        <p>Release Date: {{movie.released_at}}</p>
+    {% endif %}
+    {% if movie.imdb_url %}
+        <a href="{{ movie.imdb_url}}">IMDB Page</a>
+    {% endif %}
+    {% if "user_id" in session %}
+        <p>Average rating: {{ average }}</p>
+        {% if prediction %}
+            <p>We predict you will rate this movie {{ prediction }}.</p>
+        {% endif %}
+        {% for rating in movie.ratings %}
+            {% if session["user_id"] == rating.user_id %}
+                <h2>Your rating is: {{ rating.score }} </h2>
+            {% endif %}
+        {% endfor %}
+    <form action="/movies/{{ movie.movie_id }}" method="POST">
+        <label id="movie-rating">Rate this movie: </label>
+        <input name="movie-rating" type="number">
+        <input type="submit" value="Rate">
+    </form>
+    {% endif %}
+    {% if movie.ratings %}
+        <h2>Ratings</h2>
+        {% for rating in movie.ratings %}
+        <li>User {{ rating.user_id}} gave this movie a rating of {{ rating.score }}</li>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

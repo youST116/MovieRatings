@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Movie Ratings!</title>
+</head>
+<a href="/">HOME</a>
+  {% if "user_id" in session %}
+  <a href="/logout">LOG OUT</a>
+  {% else %}
+  <a href="/login">LOG IN</a>
+  {% endif %}
+<body>
+  <hr>
+  {% with messages = get_flashed messages() %}
+    {% if messages %}
+    <ul class=flashes>
+      {% for message in messages %}
+      <li>{{message}}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+    {% endwith %}
+    {% block content %} put your content here {% endblock %}
+
+</body>
+</html>
