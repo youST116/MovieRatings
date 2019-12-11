@@ -6,6 +6,7 @@ from app import db
 
 db = SQLAlchemy()
 
+#The Users class for the Move Ratings
 class User(db.Model):
     __tablename__ = "users"
 
@@ -15,6 +16,7 @@ class User(db.Model):
     age = db.Column(db.Integer, nullable=True)
     zipcode = db.Column(db.String(15), nullable=True)
 
+    #Comparisons between one user to another
     def comparing(self, other):
         u_ratings = {}
         paired_ratings = []
@@ -54,10 +56,11 @@ class User(db.Model):
 
         return numerator/denominator
 
-
+    #Project representation
     def __repr__(self):
         return "<User user_id=%s email=%s>" % (self.user_id, self.email)
 
+#Movies Class in Movie ratings
 class Movie(db.Model):
     __tablename__ = "movies"
 
@@ -69,6 +72,7 @@ class Movie(db.Model):
     def __repr__(self):
         return "<Movie movie_id=%s title=%s>" % (self.movie_id, self.title)
 
+#Ratings Class in Movie Ratings
 class Rating(db.Model):
     __tablename__ = "ratings"
 
@@ -77,18 +81,20 @@ class Rating(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
 
+    #Relationships of each to the User and Movie
     user = db.relationship("User", backref=db.backref("ratings", order_by=rating_id))
     movie = db.relationship("Movie", backref=db.backref("ratings", order_by=rating_id))
 
+    #representation
     def __repr__(self):
         return "<Rating rating_id=%s movie_id=%s user_id=%s score=%s>" % (self.rating_id, self.movie_id, self.user_id, self.score)
 
+#Connects to database, Configure to use the sqlite database
 def connect_to_db(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///ratings'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ratings'
     app.config['SQLALCHEMY_ECHO'] = False
     db.app = app
     db.init_app(app)
-
 
 if __name__ == "__main__":
     from server import app
