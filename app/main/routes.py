@@ -2,6 +2,7 @@ from app.main import bp
 from flask import render_template
 from flask import Flask, jsonify, redirect, request, flash, session
 from app.main.model import User, Movie, Rating, connect_to_db, db
+from flask_debugtoolbar import DebugToolbarExtension
 import sqlite3
 
 app = Flask(__name__)
@@ -42,7 +43,7 @@ def show_movie_page(movie_id):
     c = conn.cursor()
     c.execute("SELECT score FROM ratings")
     rating_scores = c.fetchall()
-    avg_rating = float(sum(rating_scores) / len(rating_scores))
+    avg_rating = float(sum(rating_scores[3]) / len(rating_scores))
     prediction = None
 
     if (not user_rating) and user_id:
@@ -112,6 +113,7 @@ def show_registration():
 
 @bp.route("/registration", methods=["POST"])
 def registration_process():
+    user_id = request.form.get("id")
     email = request.form.get("email")
     password = request.form.get("password")
     age = request.form.get("age")
@@ -127,7 +129,7 @@ def registration_process():
         flash("You're already in our system? Please login to your account instead.")
         return redirect("/login")
     else:
-        user = User(email=email, password=password, age=age, zipcode=zipcode)
+        user = User(user_id=user_id, email=email, password=password, age=age, zipcode=zipcode)
         db.session.add(user)
         db.session.commit()
         session['user_id'] = user.user_id
@@ -135,5 +137,7 @@ def registration_process():
         return redirect("/")
 
 if __name__ == "__main__":
+    app.debug = True
     connect_to_db(app)
+    DebugToolbarExtension(app)
     app.run()

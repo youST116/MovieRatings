@@ -69,7 +69,6 @@ class Movie(db.Model):
     def __repr__(self):
         return "<Movie movie_id=%s title=%s>" % (self.movie_id, self.title)
 
-
 class Rating(db.Model):
     __tablename__ = "ratings"
 
